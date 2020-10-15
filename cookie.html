@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+	</head>
+	<body>
+		<span class="sava_cookie">保存cookie</span>
+		<script>
+		 
+		//cookie 
+		function addCookie(objName,objValue,objDays){
+		var str = objName + "=" + escape(objValue);
+		console.log(Infinity);   //Infinity
+		console.log(typeof Infinity);   //number
+		console.log(Infinity.constructor); //function Number() { [native code] }
+		if(objDays > 0){
+		var date = new Date();
+		var ms = objDays*24*3600*1000;
+		date.setTime(date.getTime() + ms);
+		str += "; expires=" + date.toGMTString();
+		}
+		if(objDays===Infinity){
+		  str += "; expires=Fri, 31 Dec 9999 23:59:59 GMT";
+		}
+		 
+		str += "; path=/";
+		document.cookie = str;
+		};
+		 		 
+		 var itemtitle=document.querySelector(".item-title");
+		 document.querySelector(".sava_cookie").addEventListener("click",function(e){
+		       var putCookieVal='设置的值';
+		       addCookie('surface',putCookieVal,Infinity);
+		      
+		 });
+		   
+		 
+		</script>
+	</body>
+</html>

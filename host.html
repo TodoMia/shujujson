@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<!-- <link rel="stylesheet" href="./css/shuju.css"> -->
+		<script src="js/vue2-6.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue-router2.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<!-- 引入组件库 -->
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<!-- <script src="https://cuikangjie.github.io/JsonExportExcel/dist/JsonExportExcel.min.js"></script> -->
+		<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/FileSaver.js/1.0.0/FileSaver.min.js"></script>
+	</head>
+	<body>
+		<div id="app">
+			<h1>永久cookie</h1>
+			<p @click="setcookie">写入cookie</p>
+			<input type="file" id="files" @change="handleFiles"/>
+			<p>{{duqujson}}</p>
+			<p @click="addjson">添加json</p>
+			<p @click="savejson">保存json</p>
+		</div>
+
+
+		
+		<script type="text/javascript">
+		
+		    new Vue({
+		        el:'#app',
+		        data: {
+					jsondata: ['a','d'],
+					duqujson:[]
+		        },
+				methods:{
+					setcookie(){
+						document.cookie = "jsondata="+this.jsondata;
+					},
+					// 读取json
+					handleFiles() {
+					   var selectedFile = document.getElementById("files").files[0];//获取读取的File对象
+					   var name = selectedFile.name;//读取选中文件的文件名
+					   var size = selectedFile.size;//读取选中文件的大小
+					   console.log("文件名:"+name+"大小："+size);
+					   var reader = new FileReader();//这里是核心！！！读取操作就是由它完成的。
+					    reader.readAsText(selectedFile);//读取文件的内容
+						var _this=this
+					    reader.onload = function(){
+							// _this.duqujson = this.result
+					        console.log("读取结果：", this.result);//当读取完成之后会回调这个函数，然后此时文件的内容存储到了result中。直接操作即可。
+							 
+					        console.log("读取结果转为JSON："+this);
+					        let json = JSON.parse(this.result);
+							_this.duqujson = json
+					        console.log(json.name);
+					        console.log(json.age);
+					    };
+					},
+					// 下载json文件
+					savejson(){
+						var content = JSON.stringify(this.duqujson);
+						var blob = new Blob([content], {type: "text/plain;charset=utf-8"});
+						saveAs(blob, "save.json");
+					},
+					addjson(){
+						newdata={'name':'data'}
+						this.duqujson.push(newdata)
+					}
+				},
+				created: function(){
+					var x = document.cookie;
+					console.log(x)
+				}
+				
+		    });
+		</script>
+	</body>
+</html>
