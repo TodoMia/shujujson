@@ -3,6 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<!-- <link rel="stylesheet" href="./css/shuju.css"> -->
 		<script src="js/vue2-6.js" type="text/javascript" charset="utf-8"></script>
 		<script src="js/vue-router2.0.js" type="text/javascript" charset="utf-8"></script>
@@ -25,6 +26,7 @@
 			<p @click="copyText">复制</p>
 			<p @click="addjson">添加json</p>
 			<p @click="savejson">保存json</p>
+			<el-button type="text" @click="open">下载</el-button>
 		</div>
 
 
@@ -35,7 +37,18 @@
 		        el:'#app',
 		        data: {
 					jsondata: ['a','d'],
-					duqujson:[]
+					duqujson:[
+	{
+		"name":"hu",
+		"cailiao":["a","b","c"],
+		"maioshu":"好的"
+	},
+	{
+		"name":"",
+		"cailiao":["a","b","c"],
+		"maioshu":"ds"
+	}
+]
 		        },
 				methods:{
 					setcookie(){
@@ -79,6 +92,32 @@
 					  document.execCommand("copy"); // 执行浏览器复制命令
 					  
 					  alert("复制成功");
+					},
+					// 下载excel
+					open() {
+						this.$confirm('下载报表?', '提示', {
+						confirmButtonText: '确定',
+						cancelButtonText: '取消',
+						type: 'warning'
+						}).then(() => {
+							// console.log(this.allmessage)
+							// console.log(this.downloadMessage)
+							var json=this.duqujson
+							// var name=(new Date()).getFullYear();
+							var name = (new Date()).getFullYear()+""+((new Date()).getMonth()+1)+""+(new Date()).getDate()+"-"+(new Date()).getHours()+"_"+(new Date()).getMinutes();
+							console.log(name)
+							var filename = name+".xlsx";
+							var ws_name = "SheetJS";
+							var wb = XLSX.utils.book_new();
+							var ws = XLSX.utils.json_to_sheet(json);
+							XLSX.utils.book_append_sheet(wb, ws, ws_name);
+							XLSX.writeFile(wb, filename);
+						}).catch(() => {
+							this.$message({
+								type: 'info',
+								message: '已取消下载'
+							});          
+						});
 					}
 				},
 				created: function(){
