@@ -21,6 +21,8 @@
 			<p @click="setcookie">写入cookie</p>
 			<input type="file" id="files" @change="handleFiles"/>
 			<p>{{duqujson}}</p>
+			<textarea id="input" ref="fuzhi" >{{duqujson}}</textarea>
+			<p @click="copyText">复制</p>
 			<p @click="addjson">添加json</p>
 			<p @click="savejson">保存json</p>
 		</div>
@@ -68,6 +70,15 @@
 					addjson(){
 						newdata={'name':'data'}
 						this.duqujson.push(newdata)
+					},
+					// 复制文本
+					copyText() {
+						console.log(this.$refs.fuzhi)
+					  this.$refs.fuzhi.select()
+					  // input.select(); // 选中文本
+					  document.execCommand("copy"); // 执行浏览器复制命令
+					  
+					  alert("复制成功");
 					}
 				},
 				created: function(){
@@ -79,3 +90,4 @@
 		</script>
 	</body>
 </html>
+
