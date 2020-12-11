@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="./css/index.css">
+		<script src="js/vue2-6.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/vue-router2.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+		<!-- 引入样式 -->
+		<link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+		<!-- 引入组件库 -->
+		<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+		<!-- <script src="https://cuikangjie.github.io/JsonExportExcel/dist/JsonExportExcel.min.js"></script> -->
+		<script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/FileSaver.js/1.0.0/FileSaver.min.js"></script>
+		<style>
+			h1{
+				text-align: center;
+			}
+			.shu{
+				/* padding: 10px; */
+				line-height: 40px;
+				font-size: 18px;
+			}
+			.shu input{
+				font-size: 18px;
+				width: 30px;
+			}
+			.shu span{
+				line-height: 40px;
+				padding: 0 15px;
+				border-radius: 10px;
+				background-color: cadetblue;
+				float: right;
+			}
+			.file{
+				padding: 10px 0;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="app">
+			<h1>数据转换</h1>
+			<div class="shu">
+				每页显示<input v-model="pagesize" type="text" >条
+				<span @click="copyText">复制数据</span>
+			</div>
+			
+			<input class="file" type="file" id="fileUploader" @change="readexcel()"/>
+			<div class="block fenye">
+				<el-pagination
+				  @size-change="handleSizeChange"
+				  @current-change="handleCurrentChange"
+				  :current-page.sync="currentPage1"
+				  :page-size="pagesize"
+				  layout="total, prev, pager, next"
+				  :total="totals">
+				</el-pagination>
+				<!-- 
+					current-page:当前页数
+					page-size:每页显示条目个数
+					total:总条目数
+					page-count:总页数
+
+				 -->
+			</div>
+			
+			<p v-for="(item,index) in message">{{item.phone}}</p>
+			<textarea id="input" ref="fuzhi" >{{fuzhishuju}}</textarea>
+			
+
+			
+		</div>
+
+
+		
+		<script type="text/javascript">
+		
+		    new Vue({
+		        el:'#app',
+		        data: {
+					duqujson:[],
+					fuzhishuju:[],
+					message:'', //当前页数据
+					allmessage:'', //全部数据，分页需要
+					currentPage1: 10,
+					totals: 0,
+					pagesize: 50,//每页3条
+					start:0,
+					end:0,
+		        },
+				methods:{
+					handleSizeChange(){
+						console.log(111)
+					},
+					handleCurrentChange(){
+						
+						this.start=(this.currentPage1-1)*this.pagesize
+						console.log(this.start)
+						this.end=this.currentPage1*this.pagesize
+						console.log(this.end)
+						this.message=this.allmessage.slice(this.start,this.end);
+						console.log(000+this.currentPage1)
+						this.fuzhishuju=[];
+						for(i=0;i<_this.message.length;i++){
+							this.fuzhishuju.push(this.message[i].phone);
+							console.log(_this.fuzhishuju)
+						}
+						
+					},
+					// 复制文本
+					copyText() {
+					  console.log(this.$refs.fuzhi)
+					  this.$refs.fuzhi.select()
+					  // input.select(); // 选中文本
+					  document.execCommand("copy"); // 执行浏览器复制命令
+					  
+					  alert("复制成功");
+					},
+					readexcel(){
+						_this=this;
+						
+						 var selectedFile = document.getElementById("fileUploader").files[0];
+						 var reader = new FileReader();
+						 reader.onload = function(event) {
+						  var data = event.target.result;
+						  var workbook = XLSX.read(data, {
+						   type: 'binary'
+						  });
+						  workbook.SheetNames.forEach(function(sheetName) {
+							console.log(sheetName)
+						   var XL_row_object = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+						   console.log(XL_row_object.length)
+						   if (XL_row_object.length > 0) {
+							// document.getElementById("jsonObject").innerHTML = JSON.stringify(XL_row_object);
+							_this.duqujson=JSON.stringify(XL_row_object);
+							console.log(JSON.stringify(XL_row_object))
+
+							_this.duqujson=JSON.parse(_this.duqujson);
+							// _this.totals=JSON.parse(_this.duqujson).length
+							_this.totals=_this.duqujson.length
+							_this.end=_this.pagesize
+							_this.currentPage1=1;
+							// 全部数据
+							_this.allmessage=_this.duqujson;
+							// 显示数据
+							_this.message=_this.allmessage.slice(0,_this.pagesize);
+
+							for(i=0;i<_this.message.length;i++){
+								_this.fuzhishuju.push(_this.message[i].phone);
+								console.log(_this.fuzhishuju)
+							}
+							
+						   }
+							
+						  })
+						 };
+						 reader.onerror = function(event) {
+						 console.error("File could not be read! Code " + event.target.error.code);
+						};
+						// 读取上传文件为二进制
+						reader.readAsBinaryString(selectedFile);
+				   }
+				},
+				created: function(){
+				}
+				
+		    });
+		</script>
+	</body>
+</html>
+
